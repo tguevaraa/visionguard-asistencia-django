@@ -42,3 +42,10 @@
 
 * `interfaz.py`: **Frontend**. Controla la ventana, la cámara, el ciclo de video y la interacción con el usuario. Incluye la lógica para exportar a Excel.
 * `modelo.py`: **Backend**. Define las clases `Empleado
+
+
+Nota: Asegúrate de copiar el archivo haarcascade_frontalface_default.xml en la misma carpeta donde esté el .exe generado.
+
+Desarrollado por: Tommy Guevara
+
+Estudiante de Ingeniería de Software - UNEMI
