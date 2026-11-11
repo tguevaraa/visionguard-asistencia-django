@@ -55,6 +55,34 @@ class ServiciosTests(TestCase):
         self.assertTrue((TMP / "modelo" / "lbph.yml").exists())
         self.assertEqual(rec.predecir(rostro_sintetico(2, ruido=9))[0], 1002)
 
+    def test_eliminar_empleado_borra_sus_datos_y_reentrena(self):
+        luis = Empleado.objects.create(codigo=1002, nombre="Luis Mora")
+        servicios.guardar_muestras(self.ana, [rostro_sintetico(1, ruido=i) for i in range(1, 6)])
+        servicios.guardar_muestras(luis, [rostro_sintetico(2, ruido=i) for i in range(1, 6)])
+        servicios.registrar_asistencia(1001, 30)
+        rec = ReconocedorLBPH(70, 200)
+        servicios.entrenar_modelo(rec)
+
+        r = servicios.eliminar_empleado(self.ana, rec)
+
+        self.assertEqual(r, {"asistencias": 1, "modelo": "reentrenado"})
+        self.assertFalse(Empleado.objects.filter(codigo=1001).exists())
+        self.assertEqual(Asistencia.objects.count(), 0)
+        self.assertFalse(any((TMP / "rostros" / "1001").glob("*.png")))
+        self.assertNotEqual(rec.predecir(rostro_sintetico(1, ruido=9))[0], 1001)  # ya no existe en el modelo
+        self.assertEqual(rec.predecir(rostro_sintetico(2, ruido=9))[0], 1002)
+
+    def test_eliminar_al_ultimo_empleado_descarta_el_modelo(self):
+        servicios.guardar_muestras(self.ana, [rostro_sintetico(1, ruido=i) for i in range(1, 6)])
+        rec = ReconocedorLBPH(70, 200)
+        servicios.entrenar_modelo(rec)
+
+        r = servicios.eliminar_empleado(self.ana, rec)
+
+        self.assertEqual(r["modelo"], "sin muestras")
+        self.assertFalse(rec.entrenado)
+        self.assertFalse((TMP / "modelo" / "lbph.yml").exists())
+
     def test_entrenar_sin_muestras_avisa(self):
         with self.assertRaises(ValueError):
             servicios.entrenar_modelo(ReconocedorLBPH(70, 200))
@@ -96,6 +124,8 @@ class VistasTests(TestCase):
         self.client.post(reverse("empleados"), {"codigo": 1003, "nombre": "Intruso"})
         self.assertFalse(Empleado.objects.filter(codigo=1003).exists())
         self.assertEqual(self.client.post(reverse("entrenar")).status_code, 302)
+        self.client.post(reverse("eliminar_empleado", args=[self.ana.pk]))
+        self.assertTrue(Empleado.objects.filter(pk=self.ana.pk).exists())
 
     def test_exportar_excel(self):
         self.client.login(username="operador", password="clave-prueba-123")

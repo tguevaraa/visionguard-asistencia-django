@@ -134,6 +134,16 @@ def borrar_muestras(request, pk):
 
 @solo_administrador
 @require_POST
+def eliminar_empleado(request, pk):
+    emp = get_object_or_404(Empleado, pk=pk)
+    nombre = emp.nombre
+    r = servicios.eliminar_empleado(emp)
+    messages.success(request, f"{nombre} fue eliminado junto con sus muestras y {r['asistencias']} asistencia(s).")
+    return redirect("empleados")
+
+
+@solo_administrador
+@require_POST
 def entrenar(request):
     try:
         r = servicios.entrenar_modelo()

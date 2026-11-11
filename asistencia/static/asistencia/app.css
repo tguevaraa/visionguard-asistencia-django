@@ -105,3 +105,4 @@ label { display: block; font-size: .85rem; color: var(--tenue); font-weight: 600
   .barra nav { order: 3; width: 100%; overflow-x: auto; }
   .contenido { padding: 1rem; }
 }
+.zona-peligro { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--borde); display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }

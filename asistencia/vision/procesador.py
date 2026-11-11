@@ -65,6 +65,11 @@ class ReconocedorLBPH:
     def entrenado(self) -> bool:
         return self._modelo is not None
 
+    def reiniciar(self) -> None:
+        """Descarta el modelo en uso (por ejemplo, si ya no quedan muestras)."""
+        with self._lock:
+            self._modelo = None
+
     def cargar(self, ruta: Path) -> bool:
         if not Path(ruta).exists():
             return False

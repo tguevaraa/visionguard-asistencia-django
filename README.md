@@ -13,7 +13,7 @@ reconocidos en **PostgreSQL** y muestra los resultados en una interfaz web inter
 |---|---|
 | Inicio de sesión | Acceso con usuarios de Django. Administrador (`is_staff`) gestiona; operador solo consulta. |
 | Panel en vivo | Video MJPEG procesado: cajas verdes (reconocido), rojas (desconocido), azules (modelo sin entrenar), con nombre y distancia LBPH dibujados sobre el video. Indicadores de cámara, FPS, presentes y registros del día, actualizados cada segundo. |
-| Empleados | Alta y edición de empleados (código, nombre, cargo, activo). Captura de 20 muestras de rostro desde la cámara y galería de muestras. |
+| Empleados | Alta, edición y eliminación de empleados (código, nombre, cargo, activo). Captura de 20 muestras de rostro desde la cámara y galería de muestras. |
 | Entrenamiento | Entrena el modelo LBPH con las muestras guardadas y lo pone en uso sin reiniciar el servidor. |
 | Registro automático | Una asistencia se registra cuando la misma persona es reconocida en **5 cuadros seguidos**, y no se repite dentro de **60 s** (configurable). |
 | Asistencias | Listado con filtros por fecha y empleado, porcentaje de confianza y **exportación a Excel**. |

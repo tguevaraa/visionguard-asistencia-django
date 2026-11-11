@@ -44,6 +44,12 @@
       {% endfor %}
       <button class="btn btn-primario">Guardar cambios</button>
     </form>
+    <form method="post" action="{% url 'eliminar_empleado' empleado.pk %}" class="zona-peligro"
+          onsubmit="return confirm('¿Eliminar a {{ empleado.nombre|escapejs }}? Se borrarán también sus muestras y sus asistencias. Esta acción no se puede deshacer.')">
+      {% csrf_token %}
+      <button class="btn btn-peligro">🗑 Eliminar empleado</button>
+      <small class="ayuda">Para conservar su historial, desmarque «Activo» en lugar de eliminarlo.</small>
+    </form>
     {% else %}
       <p>Cargo: {{ empleado.cargo|default:"—" }}</p>
     {% endif %}

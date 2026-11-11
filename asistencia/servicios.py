@@ -94,6 +94,31 @@ def capturar_muestras(empleado: Empleado) -> int:
     return guardar_muestras(empleado, rostros)
 
 
+def eliminar_empleado(empleado: Empleado, reconocedor: ReconocedorLBPH | None = None) -> dict:
+    """Elimina al empleado con sus muestras y asistencias, y actualiza el modelo.
+
+    El modelo se reentrena con las personas restantes para que deje de reconocer
+    a la persona eliminada; si no quedan muestras, se descarta.
+    """
+    asistencias = empleado.asistencias.count()
+    for m in empleado.muestras.all():
+        m.imagen.delete(save=False)
+    empleado.asistencias.all().delete()
+    empleado.delete()
+
+    reconocedor = reconocedor or obtener_servicio().reconocedor
+    try:
+        entrenar_modelo(reconocedor)
+        modelo = "reentrenado"
+    except ValueError:
+        reconocedor.reiniciar()
+        settings.VG_RUTA_MODELO.unlink(missing_ok=True)
+        modelo = "sin muestras"
+    if _servicio is not None:
+        _servicio.invalidar_nombres()
+    return {"asistencias": asistencias, "modelo": modelo}
+
+
 def entrenar_modelo(reconocedor: ReconocedorLBPH | None = None) -> dict:
     """Entrena LBPH con las muestras de empleados activos y lo pone en uso."""
     rostros, etiquetas = [], []
