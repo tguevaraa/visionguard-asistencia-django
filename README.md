@@ -45,8 +45,8 @@ Cámara ─► Hilo ServicioVideo (asistencia/vision/camara.py)
 ## Instalación
 
 ```bash
-git clone https://github.com/tommylguevara/VisionGuard-Asistencia-AI.git
-cd VisionGuard-Asistencia-AI
+git clone https://github.com/tguevaraa/visionguard-asistencia-django.git
+cd visionguard-asistencia-django
 python -m venv venv
 venv\Scripts\activate            # Windows  (Linux/macOS: source venv/bin/activate)
 pip install -r requirements.txt
