@@ -1,0 +1,24 @@
+# Entornos virtuales (la guía exige no subirlos)
+venv/
+.venv/
+env/
+# Python
+__pycache__/
+*.pyc
+# Django
+db.sqlite3
+media/
+staticfiles/
+.env
+# Artefactos de la versión de escritorio
+data/
+asistencia.log
+*.xlsx
+build/
+dist/
+*.spec
+# Editores / SO
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

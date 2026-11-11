@@ -1,0 +1,50 @@
+{% extends "asistencia/base.html" %}
+{% block titulo %}Empleados{% endblock %}
+{% block contenido %}
+<div class="cab-pagina">
+  <h1>Empleados</h1>
+  {% if user.is_staff %}
+  <form method="post" action="{% url 'entrenar' %}">
+    {% csrf_token %}<input type="hidden" name="siguiente" value="{% url 'empleados' %}">
+    <button class="btn btn-acento">🧠 Entrenar modelo</button>
+  </form>
+  {% endif %}
+</div>
+
+<section class="rejilla-2">
+  {% if user.is_staff %}
+  <div class="tarjeta">
+    <h3>Registrar empleado</h3>
+    <form method="post" class="formulario">
+      {% csrf_token %}
+      {% for campo in form %}
+        <label>{{ campo.label }} {{ campo }}
+          {% for e in campo.errors %}<small class="error">{{ e }}</small>{% endfor %}
+        </label>
+      {% endfor %}
+      <button class="btn btn-primario">Guardar y continuar a fotos</button>
+    </form>
+    <p class="ayuda">Paso 1: guardar datos · Paso 2: capturar muestras · Paso 3: entrenar.</p>
+  </div>
+  {% endif %}
+
+  <div class="tarjeta {% if not user.is_staff %}ancho-total{% endif %}">
+    <h3>Personal registrado ({{ empleados|length }})</h3>
+    <table class="tabla">
+      <thead><tr><th>Código</th><th>Nombre</th><th>Cargo</th><th>Muestras</th><th>Estado</th><th></th></tr></thead>
+      <tbody>
+      {% for e in empleados %}
+        <tr>
+          <td>{{ e.codigo }}</td><td>{{ e.nombre }}</td><td>{{ e.cargo|default:"—" }}</td>
+          <td>{% with n=e.total_muestras %}<span class="chip {% if n %}verde{% else %}rojo{% endif %}">{{ n }}</span>{% endwith %}</td>
+          <td>{% if e.activo %}Activo{% else %}Inactivo{% endif %}</td>
+          <td><a class="btn btn-ghost" href="{% url 'empleado_detalle' e.pk %}">Abrir</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="vacio">Aún no hay empleados.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

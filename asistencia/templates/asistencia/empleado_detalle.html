@@ -1,0 +1,65 @@
+{% extends "asistencia/base.html" %}
+{% block titulo %}{{ empleado.nombre }}{% endblock %}
+{% block contenido %}
+<div class="cab-pagina">
+  <h1>{{ empleado.nombre }} <small>#{{ empleado.codigo }}</small></h1>
+  <a class="btn btn-ghost" href="{% url 'empleados' %}">← Volver</a>
+</div>
+
+<section class="rejilla-2">
+  <div class="tarjeta">
+    <h3>Captura de muestras</h3>
+    <img class="mini-video" src="{% url 'video' %}" alt="Vista previa de la cámara">
+    {% if user.is_staff %}
+    <p class="ayuda">Ubique solo a <b>{{ empleado.nombre }}</b> frente a la cámara, mueva levemente la cabeza.
+      Se tomarán {{ muestras_objetivo }} muestras.</p>
+    <div class="acciones">
+      <form method="post" action="{% url 'capturar' empleado.pk %}" data-espera="Capturando muestras…">
+        {% csrf_token %}<button class="btn btn-primario">📸 Capturar muestras</button>
+      </form>
+      <form method="post" action="{% url 'entrenar' %}">
+        {% csrf_token %}<input type="hidden" name="siguiente" value="{% url 'empleado_detalle' empleado.pk %}">
+        <button class="btn btn-acento">🧠 Entrenar modelo</button>
+      </form>
+      {% if muestras %}
+      <form method="post" action="{% url 'borrar_muestras' empleado.pk %}" onsubmit="return confirm('¿Eliminar todas las muestras?')">
+        {% csrf_token %}<button class="btn btn-peligro">Eliminar muestras</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endif %}
+    <h4>Muestras guardadas ({{ empleado.total_muestras }})</h4>
+    <div class="galeria">
+      {% for m in muestras %}<img src="{{ m.imagen.url }}" alt="muestra">{% empty %}<p class="vacio">Sin muestras.</p>{% endfor %}
+    </div>
+  </div>
+
+  <div class="tarjeta">
+    <h3>Datos</h3>
+    {% if user.is_staff %}
+    <form method="post" class="formulario">
+      {% csrf_token %}
+      {% for campo in form %}
+        <label>{{ campo.label }} {{ campo }}{% for e in campo.errors %}<small class="error">{{ e }}</small>{% endfor %}</label>
+      {% endfor %}
+      <button class="btn btn-primario">Guardar cambios</button>
+    </form>
+    {% else %}
+      <p>Cargo: {{ empleado.cargo|default:"—" }}</p>
+    {% endif %}
+    <h4>Últimas asistencias</h4>
+    <ul class="lista">
+      {% for a in empleado.asistencias.all|slice:":10" %}
+        <li><b>{{ a.fecha_hora|date:"d/m/Y" }}</b><span>{{ a.fecha_hora|time:"H:i:s" }} · {{ a.confianza }}%</span></li>
+      {% empty %}<li class="vacio">Sin registros.</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll("form[data-espera]").forEach(f => f.addEventListener("submit", () => {
+  const b = f.querySelector("button"); b.disabled = true; b.textContent = f.dataset.espera;
+}));
+</script>
+{% endblock %}

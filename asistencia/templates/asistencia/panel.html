@@ -1,0 +1,51 @@
+{% extends "asistencia/base.html" %}
+{% load static %}
+{% block titulo %}Panel en vivo{% endblock %}
+{% block contenido %}
+<section class="kpis">
+  <div class="kpi"><span>Empleados activos</span><b>{{ total_empleados }}</b></div>
+  <div class="kpi"><span>Presentes hoy</span><b id="k-presentes">{{ presentes_hoy }}</b></div>
+  <div class="kpi"><span>Registros hoy</span><b id="k-registros">{{ registros_hoy }}</b></div>
+  <div class="kpi"><span>Cámara</span><b id="k-camara" class="estado">…</b></div>
+  <div class="kpi"><span>Modelo LBPH</span><b id="k-modelo" class="estado {% if modelo_entrenado %}ok{% else %}mal{% endif %}">{% if modelo_entrenado %}Entrenado{% else %}Sin entrenar{% endif %}</b></div>
+</section>
+
+<section class="rejilla-panel">
+  <div class="tarjeta video">
+    <div class="cab">
+      <h2>Cámara en tiempo real</h2>
+      <span class="punto-vivo" id="vivo">EN VIVO</span>
+    </div>
+    <img id="stream" src="{% url 'video' %}" alt="Video procesado con OpenCV">
+    <p class="ayuda">
+      <span class="chip verde">Reconocido</span>
+      <span class="chip rojo">Desconocido</span>
+      <span class="chip azul">Rostro (modelo sin entrenar)</span>
+      La asistencia se registra tras {{ cuadros_confirmacion }} cuadros seguidos con la misma identidad.
+    </p>
+  </div>
+
+  <aside class="columna">
+    <div class="tarjeta">
+      <h3>Frente a la cámara</h3>
+      <ul id="detecciones" class="lista"><li class="vacio">Nadie detectado</li></ul>
+    </div>
+    <div class="tarjeta">
+      <h3>Últimas entradas de hoy</h3>
+      <ul id="ultimas" class="lista">
+        {% for a in ultimas %}
+          <li><b>{{ a.empleado.nombre }}</b><span>{{ a.fecha_hora|time:"H:i:s" }}</span></li>
+        {% empty %}<li class="vacio">Sin registros todavía</li>{% endfor %}
+      </ul>
+    </div>
+    <div class="tarjeta">
+      <h3>Eventos</h3>
+      <ul id="eventos" class="lista eventos"><li class="vacio">—</li></ul>
+    </div>
+  </aside>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>window.VG_ESTADO_URL = "{% url 'estado' %}";</script>
+<script src="{% static 'asistencia/panel.js' %}"></script>
+{% endblock %}

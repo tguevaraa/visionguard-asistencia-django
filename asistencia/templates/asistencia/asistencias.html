@@ -1,0 +1,35 @@
+{% extends "asistencia/base.html" %}
+{% block titulo %}Asistencias{% endblock %}
+{% block contenido %}
+<div class="cab-pagina">
+  <h1>Asistencias</h1>
+  <a class="btn btn-acento" href="{% url 'exportar_excel' %}{% if query %}?{{ query }}{% endif %}">📊 Exportar a Excel</a>
+</div>
+
+<form method="get" class="tarjeta filtros">
+  <label>Desde {{ form.desde }}</label>
+  <label>Hasta {{ form.hasta }}</label>
+  <label>Empleado {{ form.empleado }}</label>
+  <button class="btn btn-primario">Filtrar</button>
+  <a class="btn btn-ghost" href="{% url 'asistencias' %}">Limpiar</a>
+  {% for e in form.non_field_errors %}<small class="error">{{ e }}</small>{% endfor %}
+</form>
+
+<div class="tarjeta">
+  <h3>{{ total }} registro{{ total|pluralize }}</h3>
+  <table class="tabla">
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Código</th><th>Empleado</th><th>Cargo</th><th>Confianza</th></tr></thead>
+    <tbody>
+    {% for a in asistencias %}
+      <tr>
+        <td>{{ a.fecha_hora|date:"d/m/Y" }}</td><td>{{ a.fecha_hora|time:"H:i:s" }}</td>
+        <td>{{ a.empleado.codigo }}</td><td>{{ a.empleado.nombre }}</td><td>{{ a.empleado.cargo|default:"—" }}</td>
+        <td><div class="barra-conf"><i style="width: {{ a.confianza }}%"></i></div> {{ a.confianza }}%</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="vacio">No hay asistencias con esos filtros.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

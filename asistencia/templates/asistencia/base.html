@@ -1,0 +1,36 @@
+{% load static %}<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}VisionGuard AI{% endblock %} · VisionGuard AI</title>
+  <link rel="stylesheet" href="{% static 'asistencia/app.css' %}">
+</head>
+<body>
+  {% if user.is_authenticated %}
+  <header class="barra">
+    <a class="marca" href="{% url 'panel' %}"><span class="ojo">◉</span> VisionGuard <b>AI</b></a>
+    <nav>
+      {% url 'panel' as u_panel %}{% url 'empleados' as u_emp %}{% url 'asistencias' as u_asis %}
+      <a href="{{ u_panel }}" class="{% if request.path == u_panel %}activo{% endif %}">Panel en vivo</a>
+      <a href="{{ u_emp }}" class="{% if u_emp in request.path %}activo{% endif %}">Empleados</a>
+      <a href="{{ u_asis }}" class="{% if u_asis in request.path %}activo{% endif %}">Asistencias</a>
+    </nav>
+    <div class="usuario">
+      <span>{{ user.get_full_name|default:user.username }}{% if user.is_staff %} · <em>admin</em>{% endif %}</span>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-ghost">Salir</button></form>
+    </div>
+  </header>
+  {% endif %}
+
+  <main class="{% block clase_main %}contenido{% endblock %}">
+    {% if messages %}
+      <div class="mensajes">
+        {% for m in messages %}<div class="msg msg-{{ m.tags }}">{{ m }}</div>{% endfor %}
+      </div>
+    {% endif %}
+    {% block contenido %}{% endblock %}
+  </main>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

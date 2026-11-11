@@ -1,0 +1,18 @@
+{% extends "asistencia/base.html" %}
+{% block titulo %}Ingresar{% endblock %}
+{% block clase_main %}pantalla-login{% endblock %}
+{% block contenido %}
+<section class="tarjeta login">
+  <div class="marca grande"><span class="ojo">◉</span> VisionGuard <b>AI</b></div>
+  <p class="sub">Control de asistencia por reconocimiento facial</p>
+  {% if form.errors %}<div class="msg msg-error">Usuario o contraseña incorrectos.</div>{% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <label>Usuario {{ form.username }}</label>
+    <label>Contraseña {{ form.password }}</label>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="btn btn-primario ancho">Ingresar</button>
+  </form>
+  <p class="pie">UNEMI · Construcción de Software</p>
+</section>
+{% endblock %}

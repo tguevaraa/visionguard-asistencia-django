@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+"""Utilidad de línea de comandos de Django para VisionGuard AI."""
+import os
+import sys
+
+
+def main():
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "visionguard.settings")
+    from django.core.management import execute_from_command_line
+
+    execute_from_command_line(sys.argv)
+
+
+if __name__ == "__main__":
+    main()
